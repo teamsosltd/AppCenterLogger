@@ -7,6 +7,7 @@ using AppCenterBase = Microsoft.AppCenter.AppCenter;
 
 namespace Microsoft.Extensions.Logging.AppCenter
 {
+    [ProviderAlias("AppCenter")]
     public class AppCenterLoggerProvider : ILoggerProvider, ISupportExternalScope
     {
         private readonly IOptionsMonitor<AppCenterLoggerOptions> _options;
@@ -19,7 +20,7 @@ namespace Microsoft.Extensions.Logging.AppCenter
         {
             _options = options;
             _loggers = new ConcurrentDictionary<string, AppCenterLogger>();
-            AppCenterBase.LogLevel = _options.CurrentValue.AppCenterLogLevel;
+            AppCenterBase.LogLevel = Microsoft.AppCenter.LogLevel.None; //_options.CurrentValue.AppCenterLogLevel;
             AppCenterBase.Start(_options.CurrentValue.AppCenterSecret, typeof(Analytics), typeof(Crashes));
             ReloadLoggerOptions(options.CurrentValue);
         }

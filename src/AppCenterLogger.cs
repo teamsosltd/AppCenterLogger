@@ -29,9 +29,11 @@ namespace Microsoft.Extensions.Logging.AppCenter
 
         public bool IsEnabled(LogLevel logLevel)
         {
+            return logLevel <= Options.AppCenterLogLevel;
+
             // If the filter is null, everything is enabled
             // unless the debugger is not attached
-            return logLevel != LogLevel.None;
+            //return logLevel != LogLevel.None;
         }
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
@@ -42,18 +44,30 @@ namespace Microsoft.Extensions.Logging.AppCenter
             }
 
             var message = formatter(state, exception);
-            var properties = new Dictionary<string, string> { { nameof(message), message } };
+            var properties = new Dictionary<string, string> 
+            { 
+                { nameof(message), message }, 
+                { "logger", _name } 
+            };
 
             if (!string.IsNullOrEmpty(message) || exception != null)
             {
-                if (!(logLevel == LogLevel.Error))
+                if (exception != null)
                 {
-                    Analytics.TrackEvent(GetLogLevelString(logLevel), properties);
+                    Crashes.TrackError(exception, properties);
+                    return;
                 }
-                else
-                {
-                    Crashes.TrackError(exception);
-                }
+
+                Analytics.TrackEvent(GetLogLevelString(logLevel), properties);
+
+                //if (!(logLevel == LogLevel.Error))
+                //{
+                //    Analytics.TrackEvent(GetLogLevelString(logLevel), properties);
+                //}
+                //else
+                //{
+                //    Crashes.TrackError(exception, properties);
+                //}
             }
         }
 
