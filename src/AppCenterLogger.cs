@@ -47,7 +47,8 @@ namespace Microsoft.Extensions.Logging.AppCenter
             var properties = new Dictionary<string, string> 
             { 
                 { nameof(message), message }, 
-                { "logger", _name } 
+                { "logger", _name },
+                { "Level",  GetLogLevelString(logLevel) }
             };
 
             if (!string.IsNullOrEmpty(message) || exception != null)
@@ -73,23 +74,25 @@ namespace Microsoft.Extensions.Logging.AppCenter
 
         private static string GetLogLevelString(LogLevel logLevel)
         {
-            switch (logLevel)
-            {
-                case LogLevel.Trace:
-                    return "Trace";
-                case LogLevel.Debug:
-                    return "Debug";
-                case LogLevel.Information:
-                    return "Information";
-                case LogLevel.Warning:
-                    return "Warning";
-                case LogLevel.Error:
-                    return "Error";
-                case LogLevel.Critical:
-                    return "Critical";
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(logLevel));
-            }
+            return logLevel.ToString();
+
+            //switch (logLevel)
+            //{
+            //    case LogLevel.Trace:
+            //        return "Trace";
+            //    case LogLevel.Debug:
+            //        return "Debug";
+            //    case LogLevel.Information:
+            //        return "Information";
+            //    case LogLevel.Warning:
+            //        return "Warning";
+            //    case LogLevel.Error:
+            //        return "Error";
+            //    case LogLevel.Critical:
+            //        return "Critical";
+            //    default:
+            //        throw new ArgumentOutOfRangeException(nameof(logLevel));
+            //}
         }
 
         
